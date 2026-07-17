@@ -1,7 +1,6 @@
 import java.time.LocalDate;
 
-
-public class part{
+public class Part {
     private String code;
     private String name;
     private String dealerName;
@@ -11,79 +10,75 @@ public class part{
     private LocalDate date;
     private String image;
 
-    private static int minimumStockLevel=10;    //assumption
+    private static int minimumStockLevel = 10;    // assumption
 
-    public Part(String code, String name, String dealerName, Double price, int quantity, String category, LocaDate date, String image){
-        setCode (code);
+    public Part(String code, String name, String dealerName, double price, int quantity, String category, LocalDate date, String image){
+        setCode(code);
         setName(name);
-        this.dealerName = dealerName;           //took a assumption(it can be empty)
+        this.dealerName = dealerName;           // assumption: can be empty
         setPrice(price);
         setQuantity(quantity);
         setCategory(category);
-        this.date=date;
-        this.imagr=image;
-
+        this.date = date;
+        this.image = image;
     }
 
-    //check data to validate
+    // check data to validate
     public void setCode(String code){
-        if(code==null || code.trim().isEmpty()){
+        if(code == null || code.trim().isEmpty()){
             throw new IllegalArgumentException("code can not be empty");
         }
-        this.code=code.trim().toUpperCase();
+        this.code = code.trim().toUpperCase();
     }
+
     public void setName(String name){
-        if(name=null || name.trim().isEmpty()){
-            throe new illegalArgumentException("name can not be empty");
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("name can not be empty");
         }
-        this.name=name.trim();
+        this.name = name.trim();
     }
-    public void setPrice(int price){
-        if(price=null || price.trim().isEmpty()){
-            throw new IllegalArgumentException("price tab can not be empty");
+
+    public void setPrice(double price){
+        if(price < 0){
+            throw new IllegalArgumentException("Price can not be negative");
         }
-        if(price<0){
-            throw new illegalArgumentException("Price can not be negative");
-        }
-        this.price=price;
+        this.price = price;
     }
+
     public void setQuantity(int quantity){
-        if(quantity=null || quantity.trim().isEmpty()){
-            throw new IllegalArgumentException("quantity can not be empty");
+        if(quantity < 0){
+            throw new IllegalArgumentException("quantity can not be negative");
         }
-        if(quantity<0){
-            throw new illegalArgumentException("quantity can not be negative");
-        }
-        this.quantity=quantity;
+        this.quantity = quantity;
     }
+
     public void setCategory(String category){
-        if(category=null || category.trim().isEmpty()){
-            throe new illegalArgumentException("category can not be empty");
+        if(category == null || category.trim().isEmpty()){
+            throw new IllegalArgumentException("category can not be empty");
         }
-        this.category=category.trim().toUpperCase();
+        this.category = category.trim().toUpperCase();
     }
 
-
-    //low stock handlers
+    // low stock handlers
     public boolean isLowStock(){
-        return quantity<minimumStockLevel;
+        return quantity < minimumStockLevel;
     }
+
     public static void setMinimumStockLevel(int level){
-        return minimumStockLevel=level;
+        minimumStockLevel = level;
     }
+
     public static int getMinimumStockLevel(){
         return minimumStockLevel;
     }
 
-
-    //getters
+    // getters
     public String getCode(){return code;}
     public String getName(){return name;}
     public String getDealerName(){return dealerName;}
     public double getPrice(){return price;}
     public int getQuantity(){return quantity;}
     public String getCategory(){return category;}
-    public LocalDate getdate(){return date;}
+    public LocalDate getDate(){return date;}
     public String getImage(){return image;}
-
 }

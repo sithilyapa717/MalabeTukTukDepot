@@ -1,39 +1,39 @@
-public class dealer{
+public class Dealer {
     private String id;
     private String name;
     private String phone;
     private String location;
 
-
-    //check validity of dealers
+    // check validity of dealers
     public Dealer(String id, String name, String phone, String location){
         setId(id);
         setName(name);
-        this.phone=(phone==null)?"N/A":phone.trim();    //not nessasary for it to implement
+        this.phone = (phone == null) ? "N/A" : phone.trim();    // not necessary for it to be validated
         setLocation(location);
     }
+
     public void setId(String id){
-        if(id==null || id.trim().isEmpty()){
-            throw illegalSrgumentException("dealer can not be empty");
+        if(id == null || id.trim().isEmpty()){
+            throw new IllegalArgumentException("dealer id can not be empty");
         }
-        this.id=id.trim().toUpperCase();
+        this.id = id.trim().toUpperCase();
     }
+
     public void setName(String name){
-        if(name==null || name.trim().isEmpty()){
-            throw illegalArgumentException("Name can not be empty");
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Name can not be empty");
         }
-        this.name=name.trim();
+        this.name = name.trim();
     }
+
     public void setLocation(String location){
-        if(location==null || location.trim().isEmpty()){
-            throw illegalArgumentException("dealer location can not be empty");
+        if(location == null || location.trim().isEmpty()){
+            throw new IllegalArgumentException("dealer location can not be empty");
         }
-        this.location=location.trim();
+        this.location = location.trim();
     }
 
-
-
-    //getters
+    // getters
     public String getId() { return id; }
     public String getName() { return name; }
     public String getPhone() { return phone; }
