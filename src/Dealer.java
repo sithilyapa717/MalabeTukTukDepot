@@ -38,4 +38,11 @@ public class Dealer {
     public String getName() { return name; }
     public String getPhone() { return phone; }
     public String getLocation() { return location; }
+
+
+
+    @Override
+    public String toString() {
+        return id + " | " + name + " | " + location + " | " + phone;
+    }
 }

@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 
-public class Part {
+public class InventoryItem{
     private String code;
     private String name;
     private String dealerName;
@@ -12,7 +12,7 @@ public class Part {
 
     private static int minimumStockLevel = 10;    // assumption
 
-    public Part(String code, String name, String dealerName, double price, int quantity, String category, LocalDate date, String image){
+    public InventoryItem(String code, String name, String dealerName, double price, int quantity, String category, LocalDate date, String image){
         setCode(code);
         setName(name);
         this.dealerName = dealerName;           // assumption: can be empty
@@ -81,4 +81,10 @@ public class Part {
     public String getCategory(){return category;}
     public LocalDate getDate(){return date;}
     public String getImage(){return image;}
+
+
+    @Override
+    public String toString() {
+        return code + " | " + name + " | Rs." + price + " | qty:" + quantity + " | " + category;
+    }
 }
