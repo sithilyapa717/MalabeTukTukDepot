@@ -2,7 +2,9 @@
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -26,6 +28,33 @@ public class LegacyDataParser {
             "MMM dd, yyyy",
             "dd-MMM-yyyy"
     };
+
+    //save inventry
+    public void saveInventory(List<InventoryItem> items, String path) throws IOException{
+        PrintWriter writer=new PrintWriter(new FileWriter(path));
+        for(int i=0; i<items.size(); i++){
+            InventoryItem item=items.get(i);
+            String image=item,getImage();
+            if(image==null){
+                image="";
+            }
+            String dealer=item.getDealerName();
+            if(dealer==null){
+                dealer="";
+            }
+            writer.println(
+                item.getCode()+","+
+                item.getName()+","+
+                dealer+","+
+                item.getPrice()+","+
+                item.getQuantity()+","+
+                item.getCategory()+","+
+                item.getDate().toString()+","+
+                image
+            )
+        }
+        writer.close();
+    }
 
 
     //parsing the inventory file
