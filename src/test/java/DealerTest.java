@@ -1,14 +1,11 @@
 import org.junit.jupiter.api.Test;
-
-import main.java.Dealer;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DealerTest {
     @Test
     void missingPhoneD(){
         Dealer d=new Dealer("D01","Malabe Aouto Spares",null,"Malabe");
-        assetEquals("N/A",d.getPhone());
+        assertEquals("N/A",d.getPhone());
     }
 
 
