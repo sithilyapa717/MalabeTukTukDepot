@@ -63,7 +63,7 @@ public class LegacyDataParser {
                     continue; // blank lines are not errors, just skipped
                 }
 
-                String[] fields = splitDirtyLine(line);
+                String[] fields = splitUnLine(line);
                 fields = fixInventoryDateSplit(fields);
 
                 if (fields.length != 8) {
@@ -76,10 +76,10 @@ public class LegacyDataParser {
                     String code = fields[0];
                     String name = fields[1];
                     String dealerName = fields[2];
-                    double price = parsePrice(fields[3]);
+                    double price = tryPriceFormat(fields[3]);
                     int quantity = Integer.parseInt(fields[4]);
                     String category = fields[5];
-                    LocalDate date = parseDate(fields[6]);
+                    LocalDate date = tryDateDormat(fields[6]);
                     String image = fields[7];
 
                     InventoryItem item = new InventoryItem(code, name, dealerName, price,
@@ -105,7 +105,7 @@ public class LegacyDataParser {
         boolean looksLikeYear = fields[7].matches("^\\d{4}$");
 
         if (!looksLikeMonthDay || !looksLikeYear) {
-            return fields; // not the date-comma case; leave as-is so it gets flagged
+            return fields; // not the date-comma case
         }
 
         String[] fixed = new String[8];
@@ -132,7 +132,7 @@ public class LegacyDataParser {
                     continue;
                 }
 
-                String[] fields = splitDirtyLine(line);
+                String[] fields = splitUnLine(line);
 
                 if (fields.length != 4) {
                     result.getErrors().add("Line " + lineNumber + ": expected 4 fields but found "
@@ -157,5 +157,41 @@ public class LegacyDataParser {
         }
 
         return result;
+    }
+
+
+    // filtering messed data
+    private String[] splitUnLine(String line){
+        String[] raw=line.split(separators, -1);
+        String[] fields=new String[raw.length];
+        for(int i=0; i<raw.length; i++){
+            fields[i]=raw[i].trim();
+        }
+        return fields;
+    }
+
+    private double tryPriceFormat(String raw){
+        if(raw == null || raw.trim().isEmpty()){
+            throw new IllegalArgumentException("Price is empty");
+        }
+        String cleaned=raw.trim().replace("Rs.","").replace("Rs","").replace(" ","");
+        return Double.parseDouble(cleaned);
+    }
+
+    private LocalDate tryDateDormat(String raw) {
+        if (raw == null || raw.trim().isEmpty()) {
+            throw new IllegalArgumentException("date is empty");
+        }
+        String text = raw.trim();
+        for (int i = 0; i < dateFormats.length; i++) {
+            try {
+                DateTimeFormatter formatter =
+                        DateTimeFormatter.ofPattern(dateFormats[i], Locale.ENGLISH);
+                return LocalDate.parse(text, formatter);
+            } catch (DateTimeParseException ignored) {
+                // try next format
+            }
+        }
+        throw new IllegalArgumentException("unrecognised date: " + text);
     }
 }

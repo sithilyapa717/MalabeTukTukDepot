@@ -8,7 +8,7 @@ public class Dealer {
     public Dealer(String id, String name, String phone, String location){
         setId(id);
         setName(name);
-        this.phone = (phone == null) ? "N/A" : phone.trim();    // not necessary for it to be validated
+        setPhone(phone); // assumption: can be empty
         setLocation(location);
     }
 
@@ -24,6 +24,13 @@ public class Dealer {
             throw new IllegalArgumentException("Name can not be empty");
         }
         this.name = name.trim();
+    }
+    public void setPhone(String phone){
+        if (phone == null || phone.trim().isEmpty()) {
+            this.phone = "N/A";
+        } else {
+            this.phone = phone.trim();
+        }
     }
 
     public void setLocation(String location){
