@@ -19,7 +19,6 @@ public class InventoryItem{
         setPrice(price);
         setQuantity(quantity);
         setCategory(category);
-        this.date = date;
         this.image = image;
     }
 
@@ -58,6 +57,11 @@ public class InventoryItem{
         }
         this.category = category.trim().toUpperCase();
     }
+
+    if(date == null){
+            throw new IllegalArgumentException("date can not be empty")
+        }
+        this.date = date;
 
     // low stock handlers
     public boolean isLowStock(){
