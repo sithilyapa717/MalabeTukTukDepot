@@ -1,6 +1,7 @@
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class LegacyDataParser {
         PrintWriter writer=new PrintWriter(new FileWriter(path));
         for(int i=0; i<items.size(); i++){
             InventoryItem item=items.get(i);
-            String image=item,getImage();
+            String image=item.getImage();
             if(image==null){
                 image="";
             }
@@ -51,9 +52,46 @@ public class LegacyDataParser {
                 item.getCategory()+","+
                 item.getDate().toString()+","+
                 image
-            )
+            );
         }
         writer.close();
+    }
+
+    //load inventory
+    public InventoryParseResult loadInventory(String cleanPath, String legacyPath) throws IOException {
+        File clean = new File(cleanPath);
+        if (clean.exists()) {
+            return parseInventoryFile(cleanPath);
+        }
+        InventoryParseResult result = parseInventoryFile(legacyPath);
+        saveInventory(result.getItems(), cleanPath);
+        return result;
+    }
+
+    //save dealers
+    public void saveDealers(List<Dealer> dealers, String path) throws IOException {
+        PrintWriter writer = new PrintWriter(new FileWriter(path));
+        for (int i = 0; i < dealers.size(); i++) {
+            Dealer d = dealers.get(i);
+            writer.println(
+                d.getId() + "," +
+                d.getName() + "," +
+                d.getPhone() + "," +
+                d.getLocation()
+            );
+        }
+        writer.close();
+    }
+
+    //load dealers
+    public DealerParseResult loadDealers(String cleanPath, String legacyPath) throws IOException {
+        File clean = new File(cleanPath);
+        if (clean.exists()) {
+            return parseDealerFile(cleanPath);
+        }
+        DealerParseResult result = parseDealerFile(legacyPath);
+        saveDealers(result.getDealers(), cleanPath);
+        return result;
     }
 
 
