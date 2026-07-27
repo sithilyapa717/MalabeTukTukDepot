@@ -1,16 +1,20 @@
+import java.time.LocalDate;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        DealerManager manager = new DealerManager("data/dealers.txt");
-        manager.load();
-        System.out.println("All dealers: " + manager.getAllDealers().size());
+    InventoryManager manager = new InventoryManager("data/inventory.txt");
+    manager.load();
 
-        List<Dealer> picked = manager.selectRandomFourUniqueDealers();
-        System.out.println("\nRandom 4 (sorted by location):");
-        for (int i = 0; i < picked.size(); i++) {
-            Dealer d = picked.get(i);
-            System.out.println(d.getId() + " | " + d.getName() + " | " + d.getLocation());
-        }
+    InventoryItem test = new InventoryItem(
+        "P999", "Test Part", "Bajaj", 100.0, 5,
+        "ENGINE", LocalDate.of(2024, 1, 1), "test.jpg"
+    );
+    manager.addItem(test);
+    manager.updateItem(new InventoryItem(
+        "P999", "Updated Part", "Bajaj", 120.0, 10,
+        "ENGINE", LocalDate.of(2024, 1, 1), "test.jpg"
+    ));
+    manager.deleteItem("P999");
     }
 }

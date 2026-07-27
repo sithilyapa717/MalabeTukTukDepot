@@ -48,6 +48,7 @@ public class InventoryManager {
         }
         items.add(item);
         save();
+        AuditLogger.logAction("ADD_PART", item.getCode());
     }
 
     public void updateItem(InventoryItem updated) throws IOException{
@@ -63,6 +64,7 @@ public class InventoryManager {
             throw new IllegalArgumentException("Part not found: " + updated.getCode());
         }
         save();
+        AuditLogger.logAction("UPDATE_PART", updated.getCode());
     }
 
     public void deleteItem(String code) throws IOException{
@@ -78,6 +80,7 @@ public class InventoryManager {
             throw new IllegalArgumentException("Part not found: " + code);
         }
         save();
+        AuditLogger.logAction("DELETE_PART", code);
     }
 
         public List<InventoryItem> getAllItemsSorted() {
