@@ -29,11 +29,7 @@
             </Tab>
             <Tab text="Dealers">
                <content>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="12.0">
-                     <children>
-                        <Label text="Dealer Selection" />
-                     </children>
-                  </VBox>
+                  <fx:include source="dealers.fxml" />
                </content>
             </Tab>
             <Tab text="Point Of Sale">

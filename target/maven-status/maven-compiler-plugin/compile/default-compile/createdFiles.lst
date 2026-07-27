@@ -11,6 +11,7 @@ Main.class
 Sort.class
 DealerManager.class
 Dealer.class
+DealerController.class
 CartItem.class
 LegacyDataParser$InventoryParseResult.class
 InventoryController.class
