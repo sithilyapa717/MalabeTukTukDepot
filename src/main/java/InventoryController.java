@@ -9,6 +9,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
+
+
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,6 +38,20 @@ public class InventoryController implements Initializable {
     @FXML private Label totalItemsLabel;
     @FXML private Label totalValueLabel;
 
+    @FXML private TextField codeField;
+    @FXML private TextField nameField;
+    @FXML private TextField dealerField;
+    @FXML private TextField priceField;
+    @FXML private TextField qtyField;
+    @FXML private TextField categoryField;
+    @FXML private TextField dateField;
+    @FXML private TextField imageField;
+
+    @FXML private Button addButton;
+    @FXML private Button updateButton;
+    @FXML private Button deleteButton;
+    @FXML private Button clearButton;
+
     private ObservableList<InventoryItem> tableData;
     private DateTimeFormatter dateFormatter;
 
@@ -37,6 +60,11 @@ public class InventoryController implements Initializable {
         dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         setupColumns();
         refreshTable();
+
+        inventoryTable.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldItem, newItem) -> fillFormFromSelection(newItem));
+
+        clearForm();
     }
 
     private void setupColumns(){
@@ -77,5 +105,149 @@ public class InventoryController implements Initializable {
         totalItemsLabel.setText("Total items: " + manager.getTotalItemCount());
         totalValueLabel.setText(String.format("Total value: Rs. %.2f",
                 manager.getTotalInventoryValue()));
+    }
+
+    private void fillFormFromSelection(InventoryItem item) {
+        if (item == null) {
+            return;
+        }
+        codeField.setText(item.getCode());
+        nameField.setText(item.getName());
+
+        String dealer = item.getDealerName();
+        if (dealer == null) {
+            dealer = "";
+        }
+        dealerField.setText(dealer);
+
+        priceField.setText(String.valueOf(item.getPrice()));
+        qtyField.setText(String.valueOf(item.getQuantity()));
+        categoryField.setText(item.getCategory());
+        dateField.setText(item.getDate().format(dateFormatter));
+
+        String image = item.getImage();
+        if (image == null) {
+            image = "";
+        }
+        imageField.setText(image);
+
+        codeField.setDisable(true);
+    }
+
+    @FXML
+    private void onClear() {
+        clearForm();
+    }
+
+    private void clearForm() {
+        codeField.clear();
+        nameField.clear();
+        dealerField.clear();
+        priceField.clear();
+        qtyField.clear();
+        categoryField.clear();
+        dateField.clear();
+        imageField.clear();
+        codeField.setDisable(false);
+        inventoryTable.getSelectionModel().clearSelection();
+    }
+
+    private InventoryItem buildItemFromForm() {
+        String code = codeField.getText();
+        String name = nameField.getText();
+
+        String dealer = dealerField.getText().trim();
+        if (dealer.length() == 0) {
+            dealer = null;
+        }
+
+        double price = Double.parseDouble(priceField.getText().trim());
+        int qty = Integer.parseInt(qtyField.getText().trim());
+        String category = categoryField.getText();
+        LocalDate date = LocalDate.parse(dateField.getText().trim(), dateFormatter);
+
+        String image = imageField.getText().trim();
+        if (image.length() == 0) {
+            image = null;
+        }
+
+        return new InventoryItem(code, name, dealer, price, qty, category, date, image);
+    }
+
+    @FXML
+    private void onAdd() {
+        try {
+            InventoryItem item = buildItemFromForm();
+            AppContext.getState().getInventoryManager().addItem(item);
+            refreshTable();
+            clearForm();
+            showInfo("Part added: " + item.getCode());
+        } catch (NumberFormatException e) {
+            showError("Invalid number", "Price and quantity must be valid numbers.");
+        } catch (DateTimeParseException e) {
+            showError("Invalid date", "Use format yyyy-MM-dd.");
+        } catch (IllegalArgumentException e) {
+            showError("Validation error", e.getMessage());
+        } catch (IOException e) {
+            showError("Save failed", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onUpdate() {
+        try {
+            if (codeField.getText().trim().length() == 0) {
+                showError("Nothing selected", "Select a row or enter a code to update.");
+                return;
+            }
+            InventoryItem item = buildItemFromForm();
+            AppContext.getState().getInventoryManager().updateItem(item);
+            refreshTable();
+            clearForm();
+            showInfo("Part updated: " + item.getCode());
+        } catch (NumberFormatException e) {
+            showError("Invalid number", "Price and quantity must be valid numbers.");
+        } catch (DateTimeParseException e) {
+            showError("Invalid date", "Use format yyyy-MM-dd.");
+        } catch (IllegalArgumentException e) {
+            showError("Validation error", e.getMessage());
+        } catch (IOException e) {
+            showError("Save failed", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onDelete() {
+        String code = codeField.getText().trim();
+        if (code.length() == 0) {
+            showError("Nothing selected", "Select a row to delete.");
+            return;
+        }
+        try {
+            AppContext.getState().getInventoryManager().deleteItem(code);
+            refreshTable();
+            clearForm();
+            showInfo("Part deleted: " + code);
+        } catch (IllegalArgumentException e) {
+            showError("Delete failed", e.getMessage());
+        } catch (IOException e) {
+            showError("Save failed", e.getMessage());
+        }
+    }
+
+    private void showError(String header, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(header);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
