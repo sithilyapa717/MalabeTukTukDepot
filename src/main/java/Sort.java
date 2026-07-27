@@ -28,4 +28,26 @@ public class Sort {
             }
         }
     }
+
+
+    public static void sortDealersByLocation(List<Dealer> dealers) {
+        for (int i = 0; i < dealers.size() - 1; i++) {
+            int smallest = i;
+
+            for (int j = i + 1; j < dealers.size(); j++) {
+                String loc1 = dealers.get(j).getLocation();
+                String loc2 = dealers.get(smallest).getLocation();
+
+                if (loc1.compareToIgnoreCase(loc2) < 0) {
+                    smallest = j;
+                }
+            }
+
+            if (smallest != i) {
+                Dealer temp = dealers.get(i);
+                dealers.set(i, dealers.get(smallest));
+                dealers.set(smallest, temp);
+            }
+        }
+    }
 }
