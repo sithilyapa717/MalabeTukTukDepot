@@ -3,31 +3,21 @@ import java.util.List;
 
 public class Main {
         public static void main(String[] args) throws Exception {
-        InventoryManager manager = new InventoryManager("data/inventory.txt");
-        manager.load();
+            InventoryManager manager = new InventoryManager("data/inventory.txt");
+            manager.load();
 
-        Cart cart = new Cart(manager);
+            Cart cart = new Cart(manager);
 
-        cart.addItem("P001", 2);
-        cart.addItem("P001", 1);  // merge → 3 total
-        System.out.println("Cart lines: " + cart.getItems().size());  // 1
-        System.out.println("Subtotal: Rs." + cart.getSubtotal());
+            cart.addItem("P001", 3);
 
-        cart.removeItem("P001");
-        System.out.println("Empty? " + cart.isEmpty());  // true
+            cart.addItem("P004", 1);
 
-       
-        try {
-            cart.ensureNotEmpty();
-        } catch (IllegalStateException e) {
-            System.out.println("Empty cart blocked: " + e.getMessage());
-        }
+            System.out.println("After bulk: Rs." + cart.calculateSubtotalAfterBulkDiscounts());
+            System.out.println("Synergy discount: Rs." + cart.calculateSynergyDiscountAmount());
+            System.out.println("Final total: Rs." + cart.checkout());
 
-        
-        try {
-            cart.addItem("P008", 1);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Stock blocked: " + e.getMessage());
-        }
+            // verify 
+            manager.load();
+            System.out.println("P001 qty after checkout: " + manager.findByCode("P001").getQuantity());
     }
 }

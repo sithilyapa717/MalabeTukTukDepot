@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 public class Cart {
     private List<CartItem> items;
@@ -77,4 +78,55 @@ public class Cart {
             throw new IllegalStateException("Cart is empty");
         }
     }
+
+    public double calculateSubtotalAfterBulkDiscounts(){
+        double total=0.0;
+        for (int i=0; i<items.size(); i++) {
+            total=total+items.get(i).getLineSubtotalAfterDiscount();
+        }
+        return total;
+    }
+    public boolean hasEngineAndElectrical(){
+        boolean hasEngine=false;
+        boolean hasElectrical=false;
+        for (int i=0; i<items.size(); i++) {
+            InventoryItem inv=inventoryManager.findByCode(items.get(i).getPartCode());
+            if (inv.getCategory().equalsIgnoreCase("ENGINE")) {
+                hasEngine=true;
+            }
+            if (inv.getCategory().equalsIgnoreCase("ELECTRICAL")){
+                hasElectrical=true;
+            }
+        }
+        return hasEngine && hasElectrical;
+    }
+    public double calculateSynergyDiscountAmount(){
+        if (hasEngineAndElectrical()) {
+            return calculateSubtotalAfterBulkDiscounts() *0.10;
+        }
+        return 0.0;
+    }
+    public double calculateFinalTotal(){
+        return calculateSubtotalAfterBulkDiscounts() - calculateSynergyDiscountAmount();
+    }
+    public double checkout() throws IOException {
+        ensureNotEmpty();
+        for (int i=0; i<items.size(); i++){
+            CartItem line=items.get(i);
+            InventoryItem inv=inventoryManager.findByCode(line.getPartCode());
+            if (line.getQuantity()>inv.getQuantity()) {
+                throw new IllegalStateException("Not enough stock for " + line.getPartCode());
+            }
+        }
+        double finalTotal = calculateFinalTotal();
+        for (int i=0; i<items.size(); i++){
+            CartItem line=items.get(i);
+            inventoryManager.deductStock(line.getPartCode(), line.getQuantity());
+            AuditLogger.log("CHECKOUT", line.getPartCode(), line.getQuantity());
+        }
+        items.clear();
+        return finalTotal;
+    }
+
+
 }

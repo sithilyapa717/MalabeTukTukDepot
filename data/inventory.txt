@@ -1,7 +1,7 @@
-P001,Bajaj 4-Stroke Piston,Bajaj,4500.0,15,ENGINE,2023-10-12,piston4s.jpg
+P001,Bajaj 4-Stroke Piston,Bajaj,4500.0,12,ENGINE,2023-10-12,piston4s.jpg
 P002,TVS King Brake Pad,TVS,1250.0,8,BRAKES,2023-05-12,brakepad.png
 P003,205/50-10 Tyre,,6500.0,24,BODYWORK,2023-10-15,
-P004,Spark Plug NGK,NGK,850.0,50,ELECTRICAL,2024-01-05,spark.jpg
+P004,Spark Plug NGK,NGK,850.0,49,ELECTRICAL,2024-01-05,spark.jpg
 P005,Clutch Cable Bajaj RE,Bajaj,950.0,12,ENGINE,2024-02-01,cl_cable.jpg
 P006,Headlight Bulb 12V,,450.0,30,ELECTRICAL,2023-11-20,hl_bulb.jpg
 P007,3-Wheeler Canopy Cover,Local,8500.5,5,BODYWORK,2023-08-15,canopy.png

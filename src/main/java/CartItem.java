@@ -39,6 +39,21 @@ public class CartItem{
         return unitPrice * quantity;
     }
 
+    public double getLineSubtotalBeforeDiscount(){
+        return unitPrice * quantity;
+    }
+
+    public double getBulkDiscountAmount(){
+        if (quantity>=3) {
+            return getLineSubtotalBeforeDiscount()*0.05;
+        }
+        return 0.0;
+    }
+
+    public double getLineSubtotalAfterDiscount(){
+        return getLineSubtotalBeforeDiscount() - getBulkDiscountAmount();
+    }
+
     //Getters
     public String getPartCode() { return partCode; }
     public String getPartName() { return partName; }

@@ -173,6 +173,23 @@ public class InventoryManager {
         return results;
     }
 
+    public void deductStock(String code, int quantity) throws IOException {
+        InventoryItem item = findByCode(code);
+
+        if (item == null) {
+            throw new IllegalArgumentException("Part not found: " + code);
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be more than 0");
+        }
+        if (quantity > item.getQuantity()) {
+            throw new IllegalArgumentException("Not enough stock for " + code);
+        }
+
+        item.setQuantity(item.getQuantity() - quantity);
+        save();
+    }
+
 
     
 }
