@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="648.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PosController">
    <top>
@@ -46,6 +46,16 @@
             <Label layoutX="22.0" layoutY="22.0" text="Quantity" />
             <TextField fx:id="qtyField" prefWidth="260.0" promptText="e.g. 2" />
             <Button fx:id="addToCartButton" mnemonicParsing="false" onAction="#onAddToCart" prefWidth="260.0" text="Add To Cart" />
+            <Label text="Receipt">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="bulkDiscountLabel" layoutX="22.0" layoutY="184.0" prefWidth="260.0" text="Bulk discount: Rs. 0.00" />
+            <Label fx:id="afterBulkLabel" layoutX="22.0" layoutY="184.0" prefWidth="260.0" text="After bulk: Rs. 0.00" />
+            <Label fx:id="synergyDiscountLabel" layoutX="22.0" layoutY="230.0" prefWidth="260.0" text="Synergy (10%): Rs. 0.00" />
+            <Label fx:id="finalTotalLabel" text="FINAL TOTAL: Rs. 0.00" />
+            <Button fx:id="checkoutButton" mnemonicParsing="false" onAction="#onPreviewCheckout" prefWidth="260.0" text="Checkout" />
          </children>
       </VBox>
    </right>

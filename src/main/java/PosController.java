@@ -28,6 +28,12 @@ public class PosController implements Initializable {
     @FXML private TableColumn<CartItem, Number> priceColumn;
     @FXML private TableColumn<CartItem, Number> lineTotalColumn;
 
+    @FXML private Label bulkDiscountLabel;
+    @FXML private Label afterBulkLabel;
+    @FXML private Label synergyDiscountLabel;
+    @FXML private Label finalTotalLabel;
+    @FXML private Button checkoutButton;
+
     @FXML private TextField partCodeField;
     @FXML private TextField qtyField;
     @FXML private Button addToCartButton;
@@ -40,7 +46,6 @@ public class PosController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupColumns();
         refreshCartTable();
-        updateDealerLabel();
     }
 
     private void setupColumns() {
@@ -121,7 +126,7 @@ public class PosController implements Initializable {
         }
 
         cartTable.setItems(tableData);
-        subtotalLabel.setText(String.format("Subtotal: Rs. %.2f", cart.getSubtotal()));
+        updateReceiptLabels();
         updateDealerLabel();
     }
 
@@ -135,11 +140,71 @@ public class PosController implements Initializable {
         }
     }
 
-    private void showError(String header, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void showError(String header, String message){
+        Alert alert=new Alert(Alert.AlertType.ERROR);
         alert.setTitle("POS");
         alert.setHeaderText(header);
         alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void updateReceiptLabels(){
+        Cart cart = AppContext.getState().getCart();
+
+        double subtotal=cart.getSubtotal();
+        double afterBulk=cart.calculateSubtotalAfterBulkDiscounts();
+        double bulkDiscount=subtotal - afterBulk;
+        double synergy=cart.calculateSynergyDiscountAmount();
+        double finalTotal = cart.calculateFinalTotal();
+
+
+        subtotalLabel.setText(String.format("Subtotal: Rs. %.2f", subtotal));
+        bulkDiscountLabel.setText(String.format("Bulk discount: Rs. %.2f", bulkDiscount));
+        afterBulkLabel.setText(String.format("After bulk: Rs. %.2f", afterBulk));
+
+        if (synergy>0) {
+            synergyDiscountLabel.setText(String.format("Synergy (10%%): Rs. %.2f", synergy));
+        } else {
+            synergyDiscountLabel.setText("Synergy (10%): Rs. 0.00");
+        }
+
+        finalTotalLabel.setText(String.format("FINAL TOTAL: Rs. %.2f", finalTotal));
+    }
+    @FXML
+    private void onPreviewCheckout() {
+        if (AppContext.getState().getSelectedDealer() == null) {
+            showError("No dealer", "Select a dealer on the Dealers tab first.");
+            return;
+        }
+
+        Cart cart = AppContext.getState().getCart();
+
+        try {
+            cart.ensureNotEmpty();
+        } catch (IllegalStateException e) {
+            showError("Empty cart", "Add items before checkout.");
+            return;
+        }
+
+        double subtotal = cart.getSubtotal();
+        double afterBulk = cart.calculateSubtotalAfterBulkDiscounts();
+        double bulkDiscount = subtotal - afterBulk;
+        double synergy = cart.calculateSynergyDiscountAmount();
+        double finalTotal = cart.calculateFinalTotal();
+
+        Dealer dealer = AppContext.getState().getSelectedDealer();
+
+        String receipt = "Dealer: " + dealer.getName() + "\n\n"
+                + String.format("Subtotal:        Rs. %.2f\n", subtotal)
+                + String.format("Bulk discount:   Rs. %.2f\n", bulkDiscount)
+                + String.format("After bulk:      Rs. %.2f\n", afterBulk)
+                + String.format("Synergy (10%%):  Rs. %.2f\n", synergy)
+                + String.format("FINAL TOTAL:     Rs. %.2f", finalTotal);
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Checkout Preview");
+        alert.setHeaderText("Receipt preview (not processed yet)");
+        alert.setContentText(receipt);
         alert.showAndWait();
     }
 }
