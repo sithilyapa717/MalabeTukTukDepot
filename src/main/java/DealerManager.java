@@ -30,26 +30,26 @@ public class DealerManager {
         return dealers;
     }
 
-    public List<Dealer> selectRandomFourUniqueDealers() {
+    public List<Dealer> selectRandomFourUniqueDealers(){
         if (dealers.size() < 4) {
             throw new IllegalStateException("Need at least 4 dealers");
         }
 
         List<Dealer> selected = new ArrayList<>();
 
-        while (selected.size() < 4) {
+        while (selected.size()<4) {
             int index = random.nextInt(dealers.size());
             Dealer picked = dealers.get(index);
 
             boolean alreadyPicked = false;
             for (int i = 0; i < selected.size(); i++) {
-                if (selected.get(i).getId().equals(picked.getId())) {
+                if (selected.get(i).getId().equals(picked.getId())){
                     alreadyPicked = true;
                     break;
                 }
             }
 
-            if (!alreadyPicked) {
+            if (!alreadyPicked){
                 selected.add(picked);
             }
         }

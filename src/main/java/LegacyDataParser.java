@@ -58,21 +58,21 @@ public class LegacyDataParser {
     }
 
     //load inventory
-    public InventoryParseResult loadInventory(String cleanPath, String legacyPath) throws IOException {
-        File clean = new File(cleanPath);
-        if (clean.exists()) {
+    public InventoryParseResult loadInventory(String cleanPath, String legacyPath) throws IOException{
+        File clean=new File(cleanPath);
+        if (clean.exists()){
             return parseInventoryFile(cleanPath);
         }
-        InventoryParseResult result = parseInventoryFile(legacyPath);
+        InventoryParseResult result=parseInventoryFile(legacyPath);
         saveInventory(result.getItems(), cleanPath);
         return result;
     }
 
     //save dealers
-    public void saveDealers(List<Dealer> dealers, String path) throws IOException {
+    public void saveDealers(List<Dealer> dealers, String path) throws IOException{
         PrintWriter writer = new PrintWriter(new FileWriter(path));
-        for (int i = 0; i < dealers.size(); i++) {
-            Dealer d = dealers.get(i);
+        for (int i =0; i<dealers.size(); i++){
+            Dealer d=dealers.get(i);
             writer.println(
                 d.getId() + "," +
                 d.getName() + "," +
@@ -84,9 +84,9 @@ public class LegacyDataParser {
     }
 
     //load dealers
-    public DealerParseResult loadDealers(String cleanPath, String legacyPath) throws IOException {
-        File clean = new File(cleanPath);
-        if (clean.exists()) {
+    public DealerParseResult loadDealers(String cleanPath, String legacyPath) throws IOException{
+        File clean=new File(cleanPath);
+        if (clean.exists()){
             return parseDealerFile(cleanPath);
         }
         DealerParseResult result = parseDealerFile(legacyPath);
@@ -96,9 +96,9 @@ public class LegacyDataParser {
 
 
     //parsing the inventory file
-    public static class InventoryParseResult {
-        private List<InventoryItem> items = new ArrayList<>();
-        private List<String> errors = new ArrayList<>();
+    public static class InventoryParseResult{
+        private List<InventoryItem> items=new ArrayList<>();
+        private List<String> errors=new ArrayList<>();
 
         public List<InventoryItem> getItems() { return items; }
         public List<String> getErrors() { return errors; }
@@ -106,9 +106,9 @@ public class LegacyDataParser {
 
 
     //parsing the dealer file
-    public static class DealerParseResult {
-        private List<Dealer> dealers = new ArrayList<>();
-        private List<String> errors = new ArrayList<>();
+    public static class DealerParseResult{
+        private List<Dealer> dealers=new ArrayList<>();
+        private List<String> errors=new ArrayList<>();
 
         public List<Dealer> getDealers() { return dealers; }
         public List<String> getErrors() { return errors; }
@@ -116,24 +116,24 @@ public class LegacyDataParser {
 
 
     //inventory
-    public InventoryParseResult parseInventoryFile(String filePath) throws IOException {
-        InventoryParseResult result = new InventoryParseResult();
+    public InventoryParseResult parseInventoryFile(String filePath) throws IOException{
+        InventoryParseResult result=new InventoryParseResult();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader=new BufferedReader(new FileReader(filePath))){
             String line;
             int lineNumber = 0;
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null){
                 lineNumber++;
 
-                if (line.trim().isEmpty()) {
+                if (line.trim().isEmpty()){
                     continue; // blank lines are not errors, just skipped
                 }
 
                 String[] fields = splitUnLine(line);
                 fields = fixInventoryDateSplit(fields);
 
-                if (fields.length != 8) {
+                if (fields.length != 8){
                     result.getErrors().add("Line " + lineNumber + ": expected 8 fields but found "
                             + fields.length + " -> skipped. Raw line: \"" + line + "\"");
                     continue;
@@ -168,16 +168,16 @@ public class LegacyDataParser {
             return fields;
         }
 
-        boolean looksLikeMonthDay = fields[6].matches("^[A-Za-z]{3,9}\\s+\\d{1,2}$");
-        boolean looksLikeYear = fields[7].matches("^\\d{4}$");
+        boolean looksLikeMonthDay=fields[6].matches("^[A-Za-z]{3,9}\\s+\\d{1,2}$");
+        boolean looksLikeYear=fields[7].matches("^\\d{4}$");
 
         if (!looksLikeMonthDay || !looksLikeYear) {
             return fields; // not the date-comma case
         }
 
         String[] fixed = new String[8];
-        for (int i = 0; i < 6; i++) {
-            fixed[i] = fields[i];
+        for (int i=0; i<6; i++){
+            fixed[i]=fields[i];
         }
         fixed[6] = fields[6] + ", " + fields[7];
         fixed[7] = fields[8];
@@ -185,23 +185,23 @@ public class LegacyDataParser {
     }
 
     //dealers
-    public DealerParseResult parseDealerFile(String filePath) throws IOException {
-        DealerParseResult result = new DealerParseResult();
+    public DealerParseResult parseDealerFile(String filePath) throws IOException{
+        DealerParseResult result=new DealerParseResult();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader=new BufferedReader(new FileReader(filePath))){
             String line;
             int lineNumber = 0;
 
-            while ((line = reader.readLine()) != null) {
+            while ((line=reader.readLine()) != null){
                 lineNumber++;
 
-                if (line.trim().isEmpty()) {
+                if (line.trim().isEmpty()){
                     continue;
                 }
 
                 String[] fields = splitUnLine(line);
 
-                if (fields.length != 4) {
+                if (fields.length != 4){
                     result.getErrors().add("Line " + lineNumber + ": expected 4 fields but found "
                             + fields.length + " -> skipped. Raw line: \"" + line + "\"");
                     continue;
@@ -216,7 +216,7 @@ public class LegacyDataParser {
                     Dealer dealer = new Dealer(id, name, phone, location);
                     result.getDealers().add(dealer);
 
-                } catch (Exception e) {
+                } catch (Exception e){
                     result.getErrors().add("Line " + lineNumber + ": " + e.getMessage()
                             + " -> skipped. Raw line: \"" + line + "\"");
                 }
@@ -238,25 +238,23 @@ public class LegacyDataParser {
     }
 
     private double tryPriceFormat(String raw){
-        if(raw == null || raw.trim().isEmpty()){
+        if(raw==null || raw.trim().isEmpty()){
             throw new IllegalArgumentException("Price is empty");
         }
         String cleaned=raw.trim().replace("Rs.","").replace("Rs","").replace(" ","");
         return Double.parseDouble(cleaned);
     }
 
-    private LocalDate tryDateDormat(String raw) {
-        if (raw == null || raw.trim().isEmpty()) {
+    private LocalDate tryDateDormat(String raw){
+        if (raw==null || raw.trim().isEmpty()){
             throw new IllegalArgumentException("date is empty");
         }
-        String text = raw.trim();
-        for (int i = 0; i < dateFormats.length; i++) {
+        String text=raw.trim();
+        for (int i=0; i<dateFormats.length; i++){
             try {
-                DateTimeFormatter formatter =
-                        DateTimeFormatter.ofPattern(dateFormats[i], Locale.ENGLISH);
+                DateTimeFormatter formatter =DateTimeFormatter.ofPattern(dateFormats[i], Locale.ENGLISH);
                 return LocalDate.parse(text, formatter);
-            } catch (DateTimeParseException ignored) {
-                // try next format
+            } catch (DateTimeParseException ignored){
             }
         }
         throw new IllegalArgumentException("unrecognised date: " + text);

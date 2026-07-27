@@ -30,7 +30,7 @@ public class Sort {
     }
 
 
-    public static void sortDealersByLocation(List<Dealer> dealers) {
+    public static void sortDealersByLocation(List<Dealer> dealers){
         for (int i = 0; i < dealers.size() - 1; i++) {
             int smallest = i;
 

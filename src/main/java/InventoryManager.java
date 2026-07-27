@@ -17,7 +17,7 @@ public class InventoryManager {
     public void load() throws IOException {
         items.clear();
         LegacyDataParser.InventoryParseResult result=parser.parseInventoryFile(inventoryPath);
-        for (int i = 0; i < result.getItems().size(); i++){
+        for (int i=0; i<result.getItems().size(); i++){
             items.add(result.getItems().get(i));
         }
     }
@@ -43,7 +43,7 @@ public class InventoryManager {
     }
 
     public void addItem(InventoryItem item) throws IOException{
-        if (findByCode(item.getCode()) != null){
+        if (findByCode(item.getCode()) !=null){
             throw new IllegalArgumentException("Part code already exists: " + item.getCode());
         }
         items.add(item);
@@ -52,11 +52,11 @@ public class InventoryManager {
     }
 
     public void updateItem(InventoryItem updated) throws IOException{
-        boolean found = false;
-        for (int i = 0; i < items.size(); i++){
-            if (items.get(i).getCode().equalsIgnoreCase(updated.getCode())) {
+        boolean found=false;
+        for (int i=0; i<items.size(); i++){
+            if (items.get(i).getCode().equalsIgnoreCase(updated.getCode())){
                 items.set(i, updated);
-                found = true;
+                found=true;
                 break;
             }
         }
@@ -68,11 +68,11 @@ public class InventoryManager {
     }
 
     public void deleteItem(String code) throws IOException{
-        boolean found = false;
-        for (int i = 0; i < items.size(); i++){
+        boolean found=false;
+        for (int i=0; i<items.size(); i++){
             if (items.get(i).getCode().equalsIgnoreCase(code)){
                 items.remove(i);
-                found = true;
+                found=true;
                 break;
             }
         }
@@ -83,36 +83,36 @@ public class InventoryManager {
         AuditLogger.logAction("DELETE_PART", code);
     }
 
-        public List<InventoryItem> getAllItemsSorted() {
+        public List<InventoryItem> getAllItemsSorted(){
         List<InventoryItem> copy = new ArrayList<>();
-        for (int i = 0; i < items.size(); i++) {
+        for (int i=0; i<items.size(); i++) {
             copy.add(items.get(i));
         }
         Sort.sortInventoryByCategoryThenCode(copy);
         return copy;
     }
 
-    public int getTotalItemCount() {
-        int total = 0;
-        for (int i = 0; i < items.size(); i++) {
-            total = total + items.get(i).getQuantity();
+    public int getTotalItemCount(){
+        int total=0;
+        for (int i=0; i<items.size(); i++){
+            total=total + items.get(i).getQuantity();
         }
         return total;
     }
 
     public double getTotalInventoryValue() {
-        double total = 0.0;
-        for (int i = 0; i < items.size(); i++) {
-            InventoryItem item = items.get(i);
-            total = total + (item.getPrice() * item.getQuantity());
+        double total=0.0;
+        for (int i=0; i<items.size(); i++) {
+            InventoryItem item=items.get(i);
+            total=total + (item.getPrice() * item.getQuantity());
         }
         return total;
     }
 
-    public List<InventoryItem> getLowStockItems() {
+    public List<InventoryItem>getLowStockItems(){
         List<InventoryItem> lowStock = new ArrayList<>();
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).isLowStock()) {
+        for (int i =0; i<items.size(); i++) {
+            if (items.get(i).isLowStock()){
                 lowStock.add(items.get(i));
             }
         }
@@ -123,43 +123,43 @@ public class InventoryManager {
     public List<InventoryItem> search(String categoryFilter, double minPrice, double maxPrice, String keyword){
         List<InventoryItem> results = new ArrayList<>();
 
-        String category = "";
-        if (categoryFilter != null) {
+        String category="";
+        if (categoryFilter!=null) {
             category = categoryFilter.trim();
         }
 
-        String key = "";
-        if (keyword != null) {
+        String key="";
+        if (keyword!=null) {
             key = keyword.trim().toLowerCase();
         }
 
-        for (int i = 0; i < items.size(); i++) {
-            InventoryItem item = items.get(i);
-            boolean match = true;
+        for (int i = 0; i < items.size(); i++){
+            InventoryItem item=items.get(i);
+            boolean match=true;
 
             // filter 1 — category (skip if blank)
-            if (category.length() > 0) {
-                if (!item.getCategory().equalsIgnoreCase(category)) {
+            if (category.length() > 0){
+                if (!item.getCategory().equalsIgnoreCase(category)){
                     match = false;
                 }
             }
 
             // filter 2 — price range
-            if (item.getPrice() < minPrice || item.getPrice() > maxPrice) {
-                match = false;
+            if (item.getPrice() < minPrice || item.getPrice() > maxPrice){
+                match=false;
             }
 
             // filter 3 — keyword in name, code, or dealer name
-            if (key.length() > 0) {
-                boolean foundInName = item.getName().toLowerCase().contains(key);
-                boolean foundInCode = item.getCode().toLowerCase().contains(key);
-                String dealer = item.getDealerName();
-                if (dealer == null) {
-                    dealer = "";
+            if (key.length()>0) {
+                boolean foundInName=item.getName().toLowerCase().contains(key);
+                boolean foundInCode=item.getCode().toLowerCase().contains(key);
+                String dealer=item.getDealerName();
+                if (dealer==null) {
+                    dealer="";
                 }
                 boolean foundInDealer = dealer.toLowerCase().contains(key);
 
-                if (!foundInName && !foundInCode && !foundInDealer) {
+                if (!foundInName && !foundInCode && !foundInDealer){
                     match = false;
                 }
             }

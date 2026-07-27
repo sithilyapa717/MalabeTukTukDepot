@@ -73,7 +73,7 @@ public class InventoryItem{
     }
 
     public static void setMinimumStockLevel(int level){
-        minimumStockLevel = level;
+        minimumStockLevel=level;
     }
 
     public static int getMinimumStockLevel(){
