@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-
+import javafx.scene.control.ListView;
 
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
@@ -47,6 +47,14 @@ public class InventoryController implements Initializable {
     @FXML private TextField dateField;
     @FXML private TextField imageField;
 
+    @FXML private TextField searchCategoryField;
+    @FXML private TextField searchMinPriceField;
+    @FXML private TextField searchMaxPriceField;
+    @FXML private TextField searchKeywordField;
+    @FXML private Button searchButton;
+    @FXML private Button resetSearchButton;
+    @FXML private ListView<String> lowStockList;
+
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
@@ -59,12 +67,18 @@ public class InventoryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources){
         dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         setupColumns();
+        setupSearchDefaults();
         refreshTable();
 
         inventoryTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldItem, newItem) -> fillFormFromSelection(newItem));
 
         clearForm();
+    }
+
+    private void setupSearchDefaults() {
+        searchMinPriceField.setText("0");
+        searchMaxPriceField.setText("999999");
     }
 
     private void setupColumns(){
@@ -89,16 +103,17 @@ public class InventoryController implements Initializable {
     }
 
     public void refreshTable(){
-        InventoryManager manager=AppContext.getState().getInventoryManager();
-        List<InventoryItem>sorted=manager.getAllItemsSorted();
+        InventoryManager manager = AppContext.getState().getInventoryManager();
+        List<InventoryItem> sorted = manager.getAllItemsSorted();
 
-        tableData=FXCollections.observableArrayList();
-        for (int i=0; i<sorted.size(); i++){
+        tableData = FXCollections.observableArrayList();
+        for (int i = 0; i < sorted.size(); i++) {
             tableData.add(sorted.get(i));
         }
 
         inventoryTable.setItems(tableData);
         updateTotals(manager);
+        refreshLowStockPanel();
     }
 
     private void updateTotals(InventoryManager manager){
@@ -233,6 +248,57 @@ public class InventoryController implements Initializable {
         } catch (IOException e) {
             showError("Save failed", e.getMessage());
         }
+    }
+
+@FXML
+private void onSearch() {
+    try {
+        InventoryManager manager = AppContext.getState().getInventoryManager();
+
+        String category = searchCategoryField.getText();
+        String keyword = searchKeywordField.getText();
+
+        double minPrice = Double.parseDouble(searchMinPriceField.getText().trim());
+        double maxPrice = Double.parseDouble(searchMaxPriceField.getText().trim());
+
+        if (minPrice > maxPrice) {
+            showError("Invalid range", "Min price cannot be greater than max price.");
+            return;
+        }
+
+        List<InventoryItem> results = manager.search(category, minPrice, maxPrice, keyword);
+
+        tableData = FXCollections.observableArrayList();
+        for (int i = 0; i < results.size(); i++) {
+            tableData.add(results.get(i));
+        }
+        inventoryTable.setItems(tableData);
+
+    } catch (NumberFormatException e) {
+        showError("Invalid price", "Min and max price must be valid numbers.");
+    }
+}
+
+    @FXML
+    private void onResetSearch() {
+        searchCategoryField.clear();
+        searchKeywordField.clear();
+        searchMinPriceField.setText("0");
+        searchMaxPriceField.setText("999999");
+        refreshTable();
+    }
+
+    private void refreshLowStockPanel() {
+        InventoryManager manager = AppContext.getState().getInventoryManager();
+        List<InventoryItem> lowStock = manager.getLowStockItems();
+
+        ObservableList<String> lines = FXCollections.observableArrayList();
+        for (int i = 0; i < lowStock.size(); i++) {
+            InventoryItem item = lowStock.get(i);
+            lines.add(item.getCode() + " | qty:" + item.getQuantity() + " | " + item.getName());
+        }
+
+        lowStockList.setItems(lines);
     }
 
     private void showError(String header, String message) {

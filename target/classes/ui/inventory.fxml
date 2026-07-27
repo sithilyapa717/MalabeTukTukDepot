@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="800.0" prefHeight="648.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InventoryController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="800.0" prefHeight="648.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="InventoryController">
     <top>
     <HBox prefHeight="36.0" prefWidth="1060.0" spacing="40.0" BorderPane.alignment="CENTER_LEFT">
         <padding>
@@ -26,7 +33,7 @@
     </HBox>
     </top>
    <center>
-      <TableView fx:id="inventoryTable" minHeight="300.0" prefHeight="560.0" prefWidth="760.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="inventoryTable" minHeight="300.0" prefHeight="560.0" prefWidth="540.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="codeColumn" minWidth="60.0" text="Code" />
           <TableColumn fx:id="nameColumn" minWidth="150.0" prefWidth="300.0" text="Name" />
@@ -74,4 +81,33 @@
          </children>
       </VBox>
    </right>
+   <left>
+      <VBox prefHeight="560.0" prefWidth="220.0" spacing="6.0" BorderPane.alignment="TOP_CENTER">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <children>
+            <Label prefWidth="200.0" text="Search Filters">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
+            <Label layoutX="20.0" layoutY="20.0" prefWidth="200.0" text="Category" />
+            <TextField fx:id="searchCategoryField" layoutX="20.0" layoutY="43.0" promptText="blank = all" />
+            <Label layoutX="20.0" layoutY="74.0" prefWidth="200.0" text="Min price" />
+            <TextField fx:id="searchMinPriceField" layoutX="20.0" layoutY="97.0" promptText="0" />
+            <Label layoutX="20.0" layoutY="128.0" prefWidth="200.0" text="Max price" />
+            <TextField fx:id="searchMaxPriceField" layoutX="20.0" layoutY="151.0" promptText="99999" />
+            <Label layoutX="20.0" layoutY="182.0" prefWidth="200.0" text="Keyword" />
+            <TextField fx:id="searchKeywordField" layoutX="20.0" layoutY="205.0" promptText="name/code/dealer" />
+            <HBox alignment="CENTER" prefHeight="58.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearch" text="Search" />
+                  <Button fx:id="resetSearchButton" mnemonicParsing="false" onAction="#onResetSearch" text="Reset" />
+               </children>
+            </HBox>
+            <Label alignment="TOP_LEFT" contentDisplay="CENTER" text="Low stock (&lt; 10)" />
+            <ListView fx:id="lowStockList" prefHeight="180.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
