@@ -20,7 +20,6 @@ public class AuditLogger {
 
         String line=time + " | " + action + " | " + code + " | qty=" + quantity;
 
-        // true = append, do not overwrite
         PrintWriter writer=new PrintWriter(new FileWriter(logFile, true));
         writer.println(line);
         writer.close();

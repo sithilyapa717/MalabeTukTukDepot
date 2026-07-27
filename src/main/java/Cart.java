@@ -72,7 +72,6 @@ public class Cart {
         return total;
     }
 
-    // for 3.4 checkout — reject empty cart early
     public void ensureNotEmpty(){
         if (items.size()==0) {
             throw new IllegalStateException("Cart is empty");

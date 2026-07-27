@@ -1,23 +1,38 @@
-import java.time.LocalDate;
-import java.util.List;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
-public class Main {
-        public static void main(String[] args) throws Exception {
-            InventoryManager manager = new InventoryManager("data/inventory.txt");
-            manager.load();
+import java.io.IOException;
 
-            Cart cart = new Cart(manager);
+public class Main extends Application {
 
-            cart.addItem("P001", 3);
+    @Override
+    public void start(Stage stage) throws Exception {
+        AppState appState = new AppState();
+        AppContext.init(appState);
 
-            cart.addItem("P004", 1);
+        try {
+            appState.loadAll();
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Load Error");
+            alert.setHeaderText("Could not load depot data");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
 
-            System.out.println("After bulk: Rs." + cart.calculateSubtotalAfterBulkDiscounts());
-            System.out.println("Synergy discount: Rs." + cart.calculateSynergyDiscountAmount());
-            System.out.println("Final total: Rs." + cart.checkout());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main.fxml"));
+        Parent root = loader.load();
 
-            // verify 
-            manager.load();
-            System.out.println("P001 qty after checkout: " + manager.findByCode("P001").getQuantity());
+        stage.setTitle("Malabe Tuk Tuk Depot");
+        stage.setScene(new Scene(root, 1100, 720));
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
