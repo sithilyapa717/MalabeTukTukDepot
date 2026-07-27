@@ -12,6 +12,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import javafx.scene.control.ListView;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -40,12 +43,30 @@ public class PosController implements Initializable {
     @FXML private Button removeButton;
     @FXML private Button clearCartButton;
 
+    @FXML private ListView<String> dealerStockList;
+    @FXML private Label dealerStockHintLabel;
+
     private ObservableList<CartItem> tableData;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        AppContext.setPosController(this);
         setupColumns();
+        setupDealerStockList();
         refreshCartTable();
+    }
+
+    private void setupDealerStockList() {
+        dealerStockList.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldLine, newLine) -> {
+                    if (newLine == null || newLine.startsWith("(")) {
+                        return;
+                    }
+                    int bar = newLine.indexOf(" | ");
+                    if (bar > 0) {
+                        partCodeField.setText(newLine.substring(0, bar).trim());
+                    }
+                });
     }
 
     private void setupColumns() {
@@ -128,6 +149,7 @@ public class PosController implements Initializable {
         cartTable.setItems(tableData);
         updateReceiptLabels();
         updateDealerLabel();
+        refreshDealerStockPanel();
     }
 
     private void updateDealerLabel() {
@@ -142,7 +164,7 @@ public class PosController implements Initializable {
 
     private void showError(String header, String message){
         Alert alert=new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("POS");
+        alert.setTitle("Cart");
         alert.setHeaderText(header);
         alert.setContentText(message);
         alert.showAndWait();
@@ -171,7 +193,7 @@ public class PosController implements Initializable {
         finalTotalLabel.setText(String.format("FINAL TOTAL: Rs. %.2f", finalTotal));
     }
     @FXML
-    private void onPreviewCheckout() {
+    private void onCheckout() {
         if (AppContext.getState().getSelectedDealer() == null) {
             showError("No dealer", "Select a dealer on the Dealers tab first.");
             return;
@@ -186,25 +208,74 @@ public class PosController implements Initializable {
             return;
         }
 
+        // Build receipt BEFORE checkout (cart clears after checkout)
         double subtotal = cart.getSubtotal();
         double afterBulk = cart.calculateSubtotalAfterBulkDiscounts();
         double bulkDiscount = subtotal - afterBulk;
         double synergy = cart.calculateSynergyDiscountAmount();
-        double finalTotal = cart.calculateFinalTotal();
 
         Dealer dealer = AppContext.getState().getSelectedDealer();
 
-        String receipt = "Dealer: " + dealer.getName() + "\n\n"
-                + String.format("Subtotal:        Rs. %.2f\n", subtotal)
-                + String.format("Bulk discount:   Rs. %.2f\n", bulkDiscount)
-                + String.format("After bulk:      Rs. %.2f\n", afterBulk)
-                + String.format("Synergy (10%%):  Rs. %.2f\n", synergy)
-                + String.format("FINAL TOTAL:     Rs. %.2f", finalTotal);
+        try {
+            double finalTotal = cart.checkout();
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Checkout Preview");
-        alert.setHeaderText("Receipt preview (not processed yet)");
-        alert.setContentText(receipt);
-        alert.showAndWait();
+            // Refresh inventory tab (table + low-stock + totals)
+            InventoryController inventoryController = AppContext.getInventoryController();
+            if (inventoryController != null) {
+                inventoryController.refreshTable();
+            }
+
+            // Refresh cart tab (cart now empty)
+            refreshCartTable();
+
+            String receipt = "Dealer: " + dealer.getName() + "\n\n"
+                    + String.format("Subtotal:        Rs. %.2f\n", subtotal)
+                    + String.format("Bulk discount:   Rs. %.2f\n", bulkDiscount)
+                    + String.format("After bulk:      Rs. %.2f\n", afterBulk)
+                    + String.format("Synergy (10%%):  Rs. %.2f\n", synergy)
+                    + String.format("FINAL TOTAL:     Rs. %.2f\n\n", finalTotal)
+                    + "Checkout complete. Stock updated and audit logged.";
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Checkout");
+            alert.setHeaderText("Sale completed");
+            alert.setContentText(receipt);
+            alert.showAndWait();
+
+        } catch (IllegalStateException e) {
+            showError("Checkout failed", e.getMessage());
+        } catch (IOException e) {
+            showError("Save failed", "Could not save inventory or audit log: " + e.getMessage());
+        }
+    }
+
+    private void refreshDealerStockPanel() {
+        Dealer dealer = AppContext.getState().getSelectedDealer();
+
+        ObservableList<String> lines = FXCollections.observableArrayList();
+
+        if (dealer == null) {
+            dealerStockHintLabel.setText("Select a dealer on Dealers tab");
+            dealerStockList.setItems(lines);
+            return;
+        }
+
+        dealerStockHintLabel.setText("Stock from: " + dealer.getName());
+
+        InventoryManager manager = AppContext.getState().getInventoryManager();
+        List<InventoryItem> parts = manager.getItemsByDealerName(dealer.getName());
+
+        for (int i = 0; i < parts.size(); i++) {
+            InventoryItem item = parts.get(i);
+            lines.add(item.getCode() + " | " + item.getName()
+                    + " | qty:" + item.getQuantity()
+                    + " | Rs." + String.format("%.2f", item.getPrice()));
+        }
+
+        if (parts.size() == 0) {
+            lines.add("(No parts linked to this dealer)");
+        }
+
+        dealerStockList.setItems(lines);
     }
 }

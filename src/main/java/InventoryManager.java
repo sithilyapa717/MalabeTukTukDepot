@@ -190,6 +190,28 @@ public class InventoryManager {
         save();
     }
 
+    public List<InventoryItem> getItemsByDealerName(String dealerName) {
+        List<InventoryItem> results = new ArrayList<>();
+
+        if (dealerName == null || dealerName.trim().length() == 0) {
+            return results;
+        }
+
+        String target = dealerName.trim();
+
+        for (int i = 0; i < items.size(); i++) {
+            InventoryItem item = items.get(i);
+            String itemDealer = item.getDealerName();
+
+            if (itemDealer != null && itemDealer.equalsIgnoreCase(target)) {
+                results.add(item);
+            }
+        }
+
+        Sort.sortInventoryByCategoryThenCode(results);
+        return results;
+    }
+
 
     
 }

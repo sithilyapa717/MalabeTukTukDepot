@@ -11,4 +11,24 @@ public class AppContext {
         }
         return state;
     }
+
+    private static InventoryController inventoryController;
+
+    public static void setInventoryController(InventoryController controller) {
+        inventoryController = controller;
+    }
+
+    public static InventoryController getInventoryController() {
+        return inventoryController;
+    }
+
+    private static PosController posController;
+
+    public static void setPosController(PosController controller) {
+        posController = controller;
+    }
+
+    public static PosController getPosController() {
+        return posController;
+    }
 }

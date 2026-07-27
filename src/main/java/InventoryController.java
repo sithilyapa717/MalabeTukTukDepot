@@ -69,6 +69,7 @@ public class InventoryController implements Initializable {
         setupColumns();
         setupSearchDefaults();
         refreshTable();
+        AppContext.setInventoryController(this);
 
         inventoryTable.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldItem, newItem) -> fillFormFromSelection(newItem));

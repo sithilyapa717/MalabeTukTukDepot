@@ -31,7 +31,7 @@
                   <fx:include source="dealers.fxml" />
                </content>
             </Tab>
-            <Tab text="Point Of Sale">
+            <Tab text="Cart">
                <content>
                   <fx:include source="pos.fxml" />
                </content>

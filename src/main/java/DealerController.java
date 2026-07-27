@@ -69,21 +69,27 @@ public class DealerController implements Initializable {
     private void onSelectDealer() {
         Dealer selected = dealerTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            showError("No selection", "Click a dealer row first, then Select for POS.");
+            showError("No selection", "Click a dealer row first, then Select for Cart.");
             return;
         }
 
         AppContext.getState().setSelectedDealer(selected);
         updateSelectedLabel();
+
+        PosController pos = AppContext.getPosController();
+        if (pos != null) {
+            pos.refreshCartTable();
+        }
+
         showInfo("Selected dealer: " + selected.getName());
     }
 
     private void updateSelectedLabel() {
         Dealer current = AppContext.getState().getSelectedDealer();
         if (current == null) {
-            selectedDealerLabel.setText("No dealer selected for POS");
+            selectedDealerLabel.setText("No dealer selected for cart");
         } else {
-            selectedDealerLabel.setText("Selected for POS: " + current.getId()
+            selectedDealerLabel.setText("Selected for cart: " + current.getId()
                     + " - " + current.getName() + " (" + current.getLocation() + ")");
         }
     }
