@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ui.MainController">
@@ -34,11 +33,7 @@
             </Tab>
             <Tab text="Point Of Sale">
                <content>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label alignment="TOP_LEFT" text="Point Of Sales Section" />
-                     </children>
-                  </VBox>
+                  <fx:include source="pos.fxml" />
                </content>
             </Tab>
          </tabs>

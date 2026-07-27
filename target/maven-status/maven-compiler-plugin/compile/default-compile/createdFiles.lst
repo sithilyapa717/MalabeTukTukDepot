@@ -8,6 +8,7 @@ Cart.class
 ui\MainController.class
 LegacyDataParser.class
 Main.class
+PosController.class
 Sort.class
 DealerManager.class
 Dealer.class
