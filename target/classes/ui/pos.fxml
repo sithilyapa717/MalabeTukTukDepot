@@ -76,7 +76,7 @@
          <children>
             <Label text="Dealer stock" />
             <Label fx:id="dealerStockHintLabel" text="Select a dealer on Dealers tab" />
-            <ListView fx:id="dealerStockList" prefHeight="200.0" prefWidth="480.0" />
+            <ListView fx:id="dealerStockList" prefHeight="480.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </left>
