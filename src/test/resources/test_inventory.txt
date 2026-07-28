@@ -1,0 +1,4 @@
+P001,Engine Part A,DealerA,1000.0,10,ENGINE,2023-10-12,
+P002,Electrical Part B,DealerB,500.0,10,ELECTRICAL,2023-10-12,
+P003,Brake Part C,DealerC,200.0,5,BRAKES,2023-10-12,
+P004,Low Stock Part,DealerD,100.0,3,ENGINE,2023-10-12,

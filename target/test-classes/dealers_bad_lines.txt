@@ -1,3 +1,0 @@
-D101,Good Dealer,0771111111,Malabe
-D102,Bad Dealer,0772222222,
-D103,Too,Few

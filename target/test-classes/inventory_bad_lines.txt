@@ -1,5 +1,0 @@
-P001,Good Part,Dealer,1000.0,5,ENGINE,2023-10-12,img.jpg
-
-P002,Too,Few,Fields,ENGINE
-P003,Bad Price,Dealer,not-a-price,5,ENGINE,2023-10-12,img.jpg
-P004,Bad Date,Dealer,500.0,5,ENGINE,99-99-9999,img.jpg
