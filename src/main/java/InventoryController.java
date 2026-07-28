@@ -274,7 +274,10 @@ private void onSearch() {
             tableData.add(results.get(i));
         }
         inventoryTable.setItems(tableData);
-
+        if (results.size() == 0) {
+            showError("No results", "No parts matched your search filters.");
+        }
+        
     } catch (NumberFormatException e) {
         showError("Invalid price", "Min and max price must be valid numbers.");
     }

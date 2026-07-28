@@ -164,7 +164,7 @@ public class PosController implements Initializable {
 
     private void showError(String header, String message){
         Alert alert=new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Cart");
+        alert.setTitle("Cart Error");
         alert.setHeaderText(header);
         alert.setContentText(message);
         alert.showAndWait();

@@ -20,8 +20,9 @@ public class Main extends Application {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Load Error");
             alert.setHeaderText("Could not load depot data");
-            alert.setContentText(e.getMessage());
+            alert.setContentText(e.getMessage() + "\n\nCheck that data/inventory.txt and data/dealers.txt exist.");
             alert.showAndWait();
+            return;  // do not open empty app
         }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main.fxml"));
